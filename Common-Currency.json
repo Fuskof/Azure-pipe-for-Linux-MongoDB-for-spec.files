@@ -33,7 +33,7 @@
 		"decimal_digits": 2,
 		"rounding": 0,
 		"code": "AED",
-		"name_plural": "UAE dirhams"
+		"name_plural": "UAE dirhamus"
 	},
 	"AFN": {
 		"symbol": "Af",
@@ -60,7 +60,7 @@
 		"decimal_digits": 0,
 		"rounding": 0,
 		"code": "AMD",
-		"name_plural": "Armenian drams"
+		"name_plural": "Armenian dramus"
 	},
 	"ARS": {
 		"symbol": "AR$",
