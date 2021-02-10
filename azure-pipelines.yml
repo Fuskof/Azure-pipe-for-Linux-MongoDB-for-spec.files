@@ -1,28 +1,26 @@
-# Starter pipeline
-- task: PowerShell@2
-  inputs:
-    targetType: 'inline'
-    script: |
-      # Write your PowerShell commands here.
-      
-      Write-Host "Hello World"
-      write-host $(mongoadmin)
-      
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
-trigger:
-- main
-
 pool:
-  vmImage: 'ubuntu-latest'
-
+  name: Azure Pipelines
+  
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- task: DownloadSecureFile@1
+  displayName: 'Download secure file'
+  inputs:
+    secureFile: 'Common-Currency.json'
+    retryCount: 2
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+- task: CopyFilesOverSSH@0
+  displayName: 'Securely copy files to the remote machine'
+  inputs:
+    sshEndpoint: MongoDbconn
+    sourceFolder: '$(Build.SourcesDirectory)'
+    contents: 'Common-Currency.json'
+    targetFolder: /home/ubuadmin/
+
+- task: SSH@0
+  displayName: 'Run shell inline on remote machine'
+  inputs:
+    sshEndpoint: MongoDbconn
+    runOptions: inline
+    inline: 'mongoimport --db test --collection inventory --authenticationDatabase admin --username mongoadmin --password $(internaldockermongodb) --file /home/ubuadmin/Common-Currency.json'
+    failOnStdErr: false
+
