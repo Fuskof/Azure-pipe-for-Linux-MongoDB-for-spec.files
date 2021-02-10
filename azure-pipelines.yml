@@ -1,26 +1,20 @@
 pool:
   name: Azure Pipelines
-  
+
 steps:
-- task: DownloadSecureFile@1
-  displayName: 'Download secure file'
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(Agent.BuildDirectory)'
   inputs:
-    secureFile: 'Common-Currency.json'
-    retryCount: 2
+    SourceFolder: '$(Build.Repository.LocalPath)'
+    Contents: '**.json'
+    TargetFolder: '$(Agent.BuildDirectory)'
+    OverWrite: true
 
-- task: CopyFilesOverSSH@0
-  displayName: 'Securely copy files to the remote machine'
-  inputs:
-    sshEndpoint: MongoDbconn
-    sourceFolder: '$(Build.SourcesDirectory)'
-    contents: 'Common-Currency.json'
-    targetFolder: /home/ubuadmin/
+- script: 'sudo apt-get install -y mongodb-org-tools'
+  displayName: 'Command Line Script'
 
-- task: SSH@0
-  displayName: 'Run shell inline on remote machine'
-  inputs:
-    sshEndpoint: MongoDbconn
-    runOptions: inline
-    inline: 'mongoimport --db test --collection inventory --authenticationDatabase admin --username mongoadmin --password $(internaldockermongodb) --file /home/ubuadmin/Common-Currency.json'
-    failOnStdErr: false
+- script: 'sudo docker run -d -p 27017:27017 --name mongo-on-dcoker -e MONGO_INITDB_ROOT_USERNAME=mongoadmin -e MONGO_INITDB_ROOT_PASSWORD=$(internaldockermongodb) mongo'
+  displayName: 'Docker MongoDB install'
 
+- script: 'mongoimport --db test --collection inventory --authenticationDatabase admin --username mongoadmin --password $(internaldockermongodb) --file $(Agent.BuildDirectory)/Common-Currency.json'
+  displayName: 'Command Line Script'
