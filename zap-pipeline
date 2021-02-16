@@ -1,0 +1,12 @@
+trigger:
+- master
+
+pool:
+  name: zap-pipeline
+  vmImage: 'ubuntu-20.04'
+
+
+steps:
+ - task: Bash@3
+   inputs:
+    filePath: '$(Build.Repository.LocalPath)'
