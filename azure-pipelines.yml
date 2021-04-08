@@ -6,7 +6,7 @@ pool:
 steps:
 - task: AzureKeyVault@1
   inputs:
-    azureSubscription: 'Azure subscription 1 (a09585e5-c4bf-4f47-b467-f04b929f095a)'
+    azureSubscription: 'Azure subscription 1 (xxxxxxx)'
     KeyVaultName: 'mondbadminkey'
     
 - task: CopyFiles@2
